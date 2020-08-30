@@ -34,6 +34,10 @@ class IndexView(ListView):
                 data = data.filter(Q(name__icontains=search) | Q(description__icontains=search))
         return data
 
+def product_category(request, pk):
+    data = Product.objects.filter(category__pk=pk).order_by('category', 'name')
+    print(data)
+    return render(request, 'product_categories.html', {'products': data})
 
 class ProductView(DetailView):
     template_name = 'product_view.html'

@@ -11,8 +11,7 @@
 {% block content %}
     <div class="product_view content">
         <h1>{{ product.name }}</h1>
-        <p>Категория: <a href="">{{ product.category }}</a></p>
-{#        {% url 'product_category' product.category %}#}
+        <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a></p>
         <p>Осталось: {{ product.amount }}шт. по цене {{ product.price }} за ед.</p>
         <label>Описание:</label>
         <p class="pre">{{ product.description }}</p>
