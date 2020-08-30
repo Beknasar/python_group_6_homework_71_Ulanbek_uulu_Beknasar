@@ -1,10 +1,12 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+
 from webapp.models import Product
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, UpdateView
 from django.http import HttpResponseNotAllowed
-from .forms import SearchForm
+from .forms import SearchForm, ProductForm
 
 
 class IndexView(ListView):
@@ -46,3 +48,12 @@ class ProductView(DetailView):
 
     def get_queryset(self):
         return Product.objects.all()
+
+class ProductUpdateView(UpdateView):
+    template_name = 'product_update.html'
+    form_class = ProductForm
+    model = Product
+    context_object_name = 'product'
+
+    def get_success_url(self):
+        return reverse('product_view', kwargs={'pk': self.object.pk})
