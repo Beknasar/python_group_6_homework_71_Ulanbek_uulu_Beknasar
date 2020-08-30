@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import View, TemplateView
 
-from webapp.models import Product, Basket
+from webapp.models import Product, Basket, Category
 
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 from django.http import HttpResponseNotAllowed
@@ -35,10 +35,16 @@ class IndexView(ListView):
                 data = data.filter(Q(name__icontains=search) | Q(description__icontains=search))
         return data
 
-def product_category(request, pk):
-    data = Product.objects.filter(category__pk=pk).order_by('category', 'name')
-    print(data)
-    return render(request, 'product_categories.html', {'products': data})
+
+
+class CategoryView(ListView):
+        template_name = 'product_categories.html'
+
+        context_object_name = 'products'
+
+        def get_queryset(self, **kwargs):
+            pk = self.kwargs.get('pk')
+            return Product.objects.filter(category__pk=pk).order_by('category', 'name')
 
 class ProductView(DetailView):
     template_name = 'product_view.html'
