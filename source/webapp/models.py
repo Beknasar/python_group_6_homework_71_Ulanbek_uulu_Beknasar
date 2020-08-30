@@ -26,3 +26,15 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
+class Basket(models.Model):
+    product = models.ForeignKey('webapp.Product', related_name='basket', on_delete=models.PROTECT,
+                                 verbose_name='Корзина')
+    amount = models.IntegerField(verbose_name='Количество в корзине', validators=(MinValueValidator(0),))
+
+    def __str__(self):
+        return '{} -- {}'.format(self.product, self.amount)
+
+    class Meta:
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
