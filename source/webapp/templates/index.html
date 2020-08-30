@@ -22,8 +22,8 @@
 {#                    {% url 'product_delete' product.pk %}#}
                     <a href="#" class="card-button"><i class="far fa-edit"></i></a><br/>
 {#                    {% url 'product_update' product.pk %}#}
-                    <h3><a href="#">{{ product.name }}</a></h3>
-{#                    {% url 'product_view' product.pk %}#}
+                    <h3><a href="{% url 'product_view' product.pk %}">{{ product.name }}</a></h3>
+
                     <p>Категория: <a href="#">{{ product.category }}</a><br/>
 {#                        {% url 'product_category' product.category.pk %}#}
                     Цена {{ product.price }} за ед.</p>
