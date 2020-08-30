@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock %}
+{% block styles %}<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">{% endblock %}
+{% block content %}
+    {% block menu %}
+        <li><a href="" class="down">Categories <i class="fas fa-angle-down"></i></a>
+          <ul class="submenu">
+              {% for product in products %}
+                  <li><a href="#">{{ product.category }}</a></li>
+{#                  {% url 'product_category' product.category.pk %}#}
+              {% endfor %}
+          </ul>
+        </li>
+{% endblock %}
+<h1>Продукты:</h1>
+    <div class = "products">
+        {% for product in products %}
+            <div class="card">
+                <div class="card-content">
+                    <br/>
+                    <a href="#" class="card-button"><i class="far fa-trash-alt"></i></a>
+{#                    {% url 'product_delete' product.pk %}#}
+                    <a href="#" class="card-button"><i class="far fa-edit"></i></a><br/>
+{#                    {% url 'product_update' product.pk %}#}
+                    <h3><a href="#">{{ product.name }}</a></h3>
+{#                    {% url 'product_view' product.pk %}#}
+                    <p>Категория: <a href="#">{{ product.category }}</a><br/>
+{#                        {% url 'product_category' product.category.pk %}#}
+                    Цена {{ product.price }} за ед.</p>
+                </div>
+		    </div>
+        {% endfor %}
+         {% if is_paginated %}
+            {% include 'partial/pagination.html' %}
+    {% endif %}
+    </div>
+{% endblock %}
