@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from webapp.models import Product
 
@@ -69,5 +69,7 @@ class ProductCreateView(CreateView):
     def get_success_url(self):
         return reverse('product_view', kwargs={'pk': self.object.pk})
 
-# class ProductDeleteView(DeleteView):
-#     template_name = 'product_delete.html'
+class ProductDeleteView(DeleteView):
+    template_name = 'product_delete.html'
+    model = Product
+    success_url = reverse_lazy('index')

@@ -4,8 +4,8 @@
 
 {% block menu %}
     <li><a href="{% url 'product_update' product.pk %}">Update</a></li>
-    <li><a href="#">Delete</a></li>
-{#    {% url 'product_delete' product.pk %}#}
+    <li><a href="{% url 'product_delete' product.pk %}">Delete</a></li>
+
 {% endblock %}
 
 {% block content %}
