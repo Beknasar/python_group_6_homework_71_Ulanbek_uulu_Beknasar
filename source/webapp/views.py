@@ -46,6 +46,7 @@ class CategoryView(ListView):
             pk = self.kwargs.get('pk')
             return Product.objects.filter(category__pk=pk).order_by('category', 'name')
 
+
 class ProductView(DetailView):
     template_name = 'product_view.html'
 

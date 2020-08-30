@@ -2,6 +2,21 @@ from django.db import models
 from django.core.validators import MinValueValidator
 
 
+class Order(models.Model):
+    products = models.ManyToManyField('webapp.Product', related_name='orders', blank=True, verbose_name='Товары')
+    name = models.CharField(max_length=100, verbose_name='Имя')
+    phone = models.CharField(max_length=20, verbose_name='Телефон')
+    address = models.CharField(max_length=100, verbose_name='Телефон')
+    date_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')
+
+    def __str__(self):
+        return f'{self.name} -- {self.phone}'
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+
+
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
     description = models.TextField(max_length=2000, null=True, blank=True, verbose_name='Описание')
@@ -26,6 +41,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
 
 class Basket(models.Model):
     product = models.ForeignKey('webapp.Product', related_name='basket', on_delete=models.PROTECT,
