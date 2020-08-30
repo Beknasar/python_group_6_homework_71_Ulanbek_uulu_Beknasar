@@ -17,8 +17,7 @@
     <div class="container">
         <ul class="menu">
             <li><a href="{% url 'index' %}">Home</a></li>
-{#            <li><a href="{% url 'task_list' %}">Tasks</a></li>#}
-{#            <li><a href="{% url 'product_create' %}">Add Product</a></li>#}
+            <li><a href="{% url 'product_create' %}">Add Product</a></li>
             {% block menu %}{% endblock %}
         </ul>
         <div class="search-form">

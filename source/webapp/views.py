@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from webapp.models import Product
 
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 from django.http import HttpResponseNotAllowed
 from .forms import SearchForm, ProductForm
 
@@ -34,6 +34,7 @@ class IndexView(ListView):
                 data = data.filter(Q(name__icontains=search) | Q(description__icontains=search))
         return data
 
+
 class ProductView(DetailView):
     template_name = 'product_view.html'
 
@@ -49,6 +50,7 @@ class ProductView(DetailView):
     def get_queryset(self):
         return Product.objects.all()
 
+
 class ProductUpdateView(UpdateView):
     template_name = 'product_update.html'
     form_class = ProductForm
@@ -57,3 +59,15 @@ class ProductUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('product_view', kwargs={'pk': self.object.pk})
+
+
+class ProductCreateView(CreateView):
+    template_name = 'product_create.html'
+    form_class = ProductForm
+    model = Product
+
+    def get_success_url(self):
+        return reverse('product_view', kwargs={'pk': self.object.pk})
+
+# class ProductDeleteView(DeleteView):
+#     template_name = 'product_delete.html'
