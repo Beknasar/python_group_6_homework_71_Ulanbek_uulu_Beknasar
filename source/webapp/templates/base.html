@@ -18,14 +18,15 @@
         <ul class="menu">
             <li><a href="{% url 'index' %}">Home</a></li>
             <li><a href="{% url 'product_create' %}">Add Product</a></li>
+             <li><a href="{% url 'basket_view' %}">Basket <i class="fas fa-cart-arrow-down"></i></a></li>
             {% block menu %}{% endblock %}
+            <li>
+                <form action="{% url 'index' %}" method="GET">
+                    <input type="text" name="search">
+                    <input type="submit" value="Найти">
+                </form>
+            </li>
         </ul>
-        <div class="search-form">
-            <form action="{% url 'index' %}" method="GET">
-                <input type="text" name="search">
-                <input type="submit" value="Найти">
-            </form>
-        </div>
     </div>
 </nav>
 

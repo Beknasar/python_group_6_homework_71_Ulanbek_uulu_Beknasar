@@ -1,8 +1,9 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.views.generic.base import View, TemplateView
 
-from webapp.models import Product
+from webapp.models import Product, Basket
 
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 from django.http import HttpResponseNotAllowed
@@ -73,7 +74,58 @@ class ProductCreateView(CreateView):
     def get_success_url(self):
         return reverse('product_view', kwargs={'pk': self.object.pk})
 
+
 class ProductDeleteView(DeleteView):
     template_name = 'product_delete.html'
     model = Product
     success_url = reverse_lazy('index')
+
+
+class BasketCountView(View):
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        product = get_object_or_404(Product, pk=pk)
+
+        try:
+            basket_product = Basket.objects.get(pk=product.pk)
+        except Basket.DoesNotExist:
+            basket_product = None
+        if basket_product is None:
+            if product.amount > 0:
+                basket_product = Basket.objects.create(
+                    product=product,
+                    amount=1
+                )
+                basket_product.save()
+        else:
+            if basket_product.amount <= product.amount:
+                basket_product.amount += 1
+            basket_product.save()
+
+        return redirect('index')
+
+class BasketView(TemplateView):
+    template_name = 'basket.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        total = 0
+        for item in Basket.objects.all():
+            total += item.product.price * item.amount
+
+        context['basket'] = Basket.objects.all()
+        context['total'] = total
+        return context
+        # print(product)
+        # if Basket.objects.filter(product=product):
+        #     basket = get_object_or_404(Basket, product=product)
+        #     basket.amount += 1
+        #     if basket.amount <= product.amount:
+        #         basket.save()
+        # elif product not in sklad.filter(amount__gt=0):
+        #     pass
+        # elif Basket.objects.all().filter(product=product):
+        #     basket = Basket.objects.create(
+        #         product=product,
+        #         amount=1
+        #     )
+

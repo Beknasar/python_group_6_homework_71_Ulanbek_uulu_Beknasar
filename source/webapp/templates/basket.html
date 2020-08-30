@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock %}
+{% block styles %}<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">{% endblock %}
+{% block content %}
+    {% block menu %}
+        <li><a href="" class="down">Categories <i class="fas fa-angle-down"></i></a>
+          <ul class="submenu">
+              {% for product in products %}
+                  <li><a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a></li>
+              {% endfor %}
+          </ul>
+        </li>
+{% endblock %}
+    <h1>Продукты:</h1>
+    <div class = "products">
+        {% for product in basket %}
+            {% if product.amount >= 1 %}
+                <h3>{{ product.product.name }}</h3>
+                <p>Осталось: {{ product.product.amount }}шт. <br/>
+                    по цене {{ product.price }} за ед.</p>
+            {% endif %}
+        {% endfor %}
+         <h2>Итого: {{ total }}</h2>
+    </div>
+{% endblock %}
