@@ -13,13 +13,19 @@
 {% endblock %}
     <h1>Продукты:</h1>
     <div class = "products">
+        {% if basket %}
         {% for product in basket %}
-            {% if product.amount >= 1 %}
-                <h3>{{ product.product.name }}</h3>
-                <p>Осталось: {{ product.product.amount }}шт. <br/>
-                    по цене {{ product.price }} за ед.</p>
-            {% endif %}
+        <div class="card">
+            <div class="card-content">
+                <h3>{{ product.product.name }}<a href="{% url 'basket_delete' product.product.pk %}"><i class="far fa-trash-alt card-button"></i></a></h3>
+                <p>Количество: {{ product.amount }}шт. <br/>
+                    по цене {{ product.product.price }} за ед.</p>
+            </div>
+        </div>
         {% endfor %}
+        {% else %}
+            <p>Пусто</p>
+        {% endif %}
          <h2>Итого: {{ total }}</h2>
     </div>
 {% endblock %}
