@@ -27,5 +27,8 @@
             <p>Пусто</p>
         {% endif %}
          <h2>Итого: {{ total }}</h2>
+        <h3>Ordering: </h3>
+        {% url 'basket_view' as action_url %}
+        {% include 'partial/form.html' with action_url=action_url form_method='post' %}
     </div>
 {% endblock %}

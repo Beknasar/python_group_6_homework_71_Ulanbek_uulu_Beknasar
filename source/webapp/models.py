@@ -6,7 +6,7 @@ class Order(models.Model):
     products = models.ManyToManyField('webapp.Product', related_name='orders', blank=True, verbose_name='Товары')
     name = models.CharField(max_length=100, verbose_name='Имя')
     phone = models.CharField(max_length=20, verbose_name='Телефон')
-    address = models.CharField(max_length=100, verbose_name='Телефон')
+    address = models.CharField(max_length=100, verbose_name='Адрес')
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')
 
     def __str__(self):
@@ -54,3 +54,12 @@ class Basket(models.Model):
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
+
+
+class OrderProduct(models.Model):
+    product = models.ForeignKey('webapp.Product', related_name='ordering_product', on_delete=models.CASCADE, verbose_name='Продукты в заказах')
+    amount = models.IntegerField(verbose_name='Количество заказанных продуктов')
+    order = models.ForeignKey('webapp.Order', related_name='product_order', on_delete=models.CASCADE, verbose_name='Заказы продуктов')
+
+    def __str__(self):
+        return '{}. {}'.format(self.pk, self.amount)

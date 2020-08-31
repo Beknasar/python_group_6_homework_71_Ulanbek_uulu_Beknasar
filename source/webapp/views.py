@@ -3,11 +3,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import View, TemplateView
 
-from webapp.models import Product, Basket, Category
+from webapp.models import Product, Basket, Order, OrderProduct
 
-from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView, FormView
 from django.http import HttpResponseNotAllowed
-from .forms import SearchForm, ProductForm
+from .forms import SearchForm, ProductForm, OrderForm
 
 
 class IndexView(ListView):
@@ -116,12 +116,11 @@ class BasketCountView(View):
                     amount=1
                 )
                 basket_product.save()
-                print(Basket.objects.all())
         return redirect('index')
 
-
-class BasketView(TemplateView):
+class BasketOrderView(FormView):
     template_name = 'basket.html'
+    form_class = OrderForm
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         total = 0
@@ -130,4 +129,25 @@ class BasketView(TemplateView):
 
         context['basket'] = Basket.objects.all().distinct()
         context['total'] = total
+        context['form']=OrderForm
         return context
+
+    def form_valid(self, form):
+        self.order = form.save()
+        for product in Product.objects.all():
+            for tovar in Basket.objects.all():
+                if product.pk == tovar.product.pk:
+                    self.order.products.add(product)
+
+        for tovar in Basket.objects.all():
+            product = Product.objects.get(pk=tovar.product.pk)
+            product.amount = tovar.product.amount - tovar.amount
+            product.save()
+            OrderProduct.objects.create(amount=tovar.amount,
+                                        order_id=self.order.pk,
+                                        product_id=tovar.product.pk)
+        Basket.objects.all().delete()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('index')
