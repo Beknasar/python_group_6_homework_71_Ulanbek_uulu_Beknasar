@@ -28,7 +28,7 @@ urlpatterns = [
     path('product/category/<int:pk>/', CategoryView.as_view(), name='product_category'),
 
     path('basket/', BasketView.as_view(), name='basket_view'),
-    path('product/<int:pk>/add-to-cart/', BasketAddView.as_view(), name='product_add_to_basket'),
+    path('product/<int:pk>/add-to-basket/', BasketAddView.as_view(), name='product_add_to_basket'),
     path('cart/<int:pk>/delete/', BasketDeleteView.as_view(), name='basket_delete'),
     path('cart/<int:pk>/delete-one/', BasketDeleteOneView.as_view(), name='basket_delete_one'),
     path('order/create/', OrderCreateView.as_view(), name='order_create'),

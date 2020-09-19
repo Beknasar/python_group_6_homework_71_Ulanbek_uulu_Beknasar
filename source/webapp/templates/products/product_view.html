@@ -5,7 +5,6 @@
 {% block menu %}
     <li><a href="{% url 'product_update' product.pk %}">Update <i class="fas fa-edit"></i></a></li>
     <li><a href="{% url 'product_delete' product.pk %}">Delete <i class="fas fa-trash"></i></a></li>
-    <li><a href="{% url 'basket_count' product.pk%}">Add to basket <i class="fas fa-cart-arrow-down"></i></a></li>
 {% endblock %}
 
 {% block content %}
@@ -15,5 +14,6 @@
         <p>Осталось: {{ product.amount }}шт. по цене {{ product.price }} за ед.</p>
         <label>Описание:</label>
         <p class="pre">{{ product.description }}</p>
+        {% include 'partial/basket_add_form.html' %}
     </div>
 {% endblock %}
