@@ -5,8 +5,8 @@
     {% block menu %}
         <li><a href="" class="down">Categories <i class="fas fa-angle-down"></i></a>
           <ul class="submenu">
-              {% for product in products %}
-                  <li><a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a></li>
+              {% for category in categories %}
+                  <li><a href="{% url 'product_category' category.pk %}">{{ category.name }}</a></li>
               {% endfor %}
           </ul>
         </li>

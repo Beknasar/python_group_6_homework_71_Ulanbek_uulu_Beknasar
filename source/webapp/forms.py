@@ -16,5 +16,5 @@ class OrderForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'category', 'amount', 'price']
-
+        exclude = []
+        # 'name', 'description', 'category', 'amount', 'price'
