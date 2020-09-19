@@ -1,73 +1,144 @@
 from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic.base import View
-from webapp.models import Product, Basket, OrderProduct
+from webapp.models import Product, Basket, OrderProduct, Order
 
-from django.views.generic import FormView
-from webapp.forms import OrderForm
+from django.views.generic import FormView, ListView, CreateView, DeleteView
+from webapp.forms import OrderForm, BasketAddForm
 
 
-class BasketDeleteView(View):
+class BasketAddView(CreateView):
+    model = Basket
+    form_class = BasketAddForm
+
+    def post(self, request, *args, **kwargs):
+        self.product = get_object_or_404(Product, pk=self.kwargs.get('pk'))
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # qty = 1
+        # бонус
+        amount = form.cleaned_data.get('amount', 1)
+
+        try:
+            basket_product = Basket.objects.get(product=self.product)
+            basket_product.amount += amount
+            if basket_product.amount <= self.product.amount:
+                basket_product.save()
+        except Basket.DoesNotExist:
+            if amount <= self.product.amount:
+                Basket.objects.create(product=self.product, amount=amount)
+
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        # бонус
+        next = self.request.GET.get('next')
+        if next:
+            return next
+        return reverse('index')
+
+
+class BasketDeleteView(DeleteView):
+    model = Basket
+    success_url = reverse_lazy('basket_view')
+
+    # удаление без подтверждения
     def get(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        product = get_object_or_404(Product, pk=pk)
-        bucket = Basket.objects.get(product__pk=product.pk)
-        bucket.delete()
+        return self.delete(request, *args, **kwargs)
+
+
+# бонус
+class BasketDeleteOneView(DeleteView):
+    model = Basket
+    success_url = reverse_lazy('basket_view')
+
+    # удаление без подтверждения
+    def get(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        self.object.amount -= 1
+        if self.object.amount < 1:
+            self.object.delete()
+        else:
+            self.object.save()
+
+        return redirect(success_url)
+
+
+class OrderCreateView(CreateView):
+    model = Order
+    form_class = OrderForm
+    success_url = reverse_lazy('index')
+
+    # def form_valid(self, form):
+    #     response = super().form_valid(form)
+    #     order = self.object
+    #     # неоптимально: на каждый товар в корзине идёт 3 запроса:
+    #     # * добавить товар в заказ
+    #     # * обновить остаток товара
+    #     # * удалить товар из корзины
+    #     for item in Cart.objects.all():
+    #         product = item.product
+    #         qty = item.qty
+    #         order.order_products.create(product=product, qty=qty)
+    #         product.amount -= qty
+    #         product.save()
+    #         item.delete()
+    #     return response
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        order = self.object
+        # оптимально:
+        # цикл сам ничего не создаёт, не обновляет, не удаляет
+        # цикл работает только с объектами в памяти
+        # и заполняет два списка: products и order_products
+        basket_products = Basket.objects.all()
+        products = []
+        order_products = []
+        for item in basket_products:
+            product = item.product
+            amount = item.amount
+            product.amount -= amount
+            products.append(product)
+            order_product = OrderProduct(order=order, product=product, amount=amount)
+            order_products.append(order_product)
+        # массовое создание всех товаров в заказе
+        OrderProduct.objects.bulk_create(order_products)
+        # массовое обновление остатка у всех товаров
+        Product.objects.bulk_update(products, ('amount',))
+        # массовое удаление всех товаров в корзине
+        basket_products.delete()
+        return response
+
+    def form_invalid(self, form):
         return redirect('basket_view')
 
 
-class BasketCountView(View):
-    def get(self, request, *args, **kwargs):
-        pk = self.kwargs.get('pk')
-        product = get_object_or_404(Product, pk=pk)
-        try:
-            basket_product = Basket.objects.get(product__pk=product.pk)
-        except Basket.DoesNotExist:
-            basket_product = None
-        if basket_product:
-            if basket_product.amount <= product.amount:
-                basket_product.amount += 1
-            basket_product.save()
-        elif basket_product is None:
-            if product.amount > 0:
-                basket_product = Basket.objects.create(
-                    product=product,
-                    amount=1
-                )
-                basket_product.save()
-        return redirect('index')
+class BasketView(ListView):
+    # model = Cart
+    template_name = 'baskets/basket_view.html'
+    context_object_name = 'basket'
 
+    # вместо model = Cart
+    # для выполнения запроса в базу через модель
+    # вместо подсчёта total-ов в Python-е.
+    def get_queryset(self):
+        return Basket.get_with_product()
 
-class BasketOrderView(FormView):
-    template_name = 'baskets/basket.html'
-    form_class = OrderForm
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        total = 0
-        for item in Basket.objects.all():
-            total += item.product.price * item.amount
-
-        context['basket'] = Basket.objects.all().distinct()
-        context['total'] = total
-        context['form']=OrderForm
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context['basket_total'] = Basket.get_basket_total()
+        context['form'] = OrderForm()
         return context
-
-    def form_valid(self, form):
-        self.order = form.save()
-        for product in Product.objects.all():
-            for tovar in Basket.objects.all():
-                if product.pk == tovar.product.pk:
-                    self.order.products.add(product)
-
-        for tovar in Basket.objects.all():
-            product = Product.objects.get(pk=tovar.product.pk)
-            product.amount = tovar.product.amount - tovar.amount
-            product.save()
-            OrderProduct.objects.create(amount=tovar.amount,
-                                        order_id=self.order.pk,
-                                        product_id=tovar.product.pk)
-        Basket.objects.all().delete()
-        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('index')

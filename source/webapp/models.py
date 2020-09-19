@@ -1,9 +1,11 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.db.models import Sum, F, ExpressionWrapper as E
 
 
 class Order(models.Model):
-    products = models.ManyToManyField('webapp.Product', related_name='orders', blank=True, verbose_name='Товары')
+    products = models.ManyToManyField('webapp.Product', related_name='orders', verbose_name='Товары',
+                                      through='webapp.OrderProduct', through_fields=['order', 'product'])
     name = models.CharField(max_length=100, verbose_name='Имя')
     phone = models.CharField(max_length=20, verbose_name='Телефон')
     address = models.CharField(max_length=100, verbose_name='Адрес')
@@ -11,6 +13,9 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.name} -- {self.phone}'
+
+    def format_time(self):
+        return self.date_create.strftime('%Y-%m-%d %H:%M:%S')
 
     class Meta:
         verbose_name = 'Заказ'
@@ -44,12 +49,36 @@ class Category(models.Model):
 
 
 class Basket(models.Model):
-    product = models.ForeignKey('webapp.Product', related_name='basket', on_delete=models.PROTECT,
+    product = models.ForeignKey('webapp.Product', related_name='basket', on_delete=models.CASCADE,
                                  verbose_name='Корзина')
     amount = models.IntegerField(verbose_name='Количество в корзине', validators=(MinValueValidator(0),))
 
     def __str__(self):
-        return '{} -- {}'.format(self.product, self.amount)
+        return '{} -- {}'.format(self.product.name, self.amount)
+
+    @classmethod
+    def get_with_total(cls):
+        # запрос, так быстрее
+        total_output_field = models.DecimalField(max_digits=10, decimal_places=2)
+        total_expr = E(F('amount') * F('product__price'), output_field=total_output_field)
+        return cls.objects.annotate(total=total_expr)
+
+    @classmethod
+    def get_with_product(cls):
+        return cls.get_with_total().select_related('product')
+
+    # @classmethod
+    # def get_cart_total(cls):
+    #     total = 0
+    #     for item in cls.objects.all():
+    #         total += item.get_total()
+    #     return total
+
+    @classmethod
+    def get_basket_total(cls):
+        # запрос, так быстрее
+        total = cls.get_with_total().aggregate(basket_total=Sum('total'))
+        return total['basket_total']
 
     class Meta:
         verbose_name = 'Корзина'

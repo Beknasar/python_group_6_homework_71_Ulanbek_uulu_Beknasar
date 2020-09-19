@@ -21,11 +21,13 @@
                     <br/>
                     <a href="{% url 'product_delete' product.pk %}" class="card-button"><i class="far fa-trash-alt"></i></a>
                     <a href="{% url 'product_update' product.pk %}" class="card-button"><i class="far fa-edit"></i></a>
-                    <a href="{% url 'basket_count' product.pk %}" class="card-button"><i class="fas fa-cart-arrow-down"></i></a><br/>
                     <h3><a href="{% url 'product_view' product.pk %}">{{ product.name }}</a></h3>
 
                     <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a><br/>
                     Цена {{ product.price }} за ед.</p>
+                    <p>Количество: {{ product.amount }}</p>
+                    {% include 'partial/basket_add_form.html' %}
+                    <br/>
                 </div>
 		    </div>
             {% endif %}

@@ -18,7 +18,7 @@
         <ul class="menu">
             <li><a href="{% url 'index' %}">Home <i class="fas fa-home"></i></a></li>
             <li><a href="{% url 'product_create' %}">Add Product <i class="fas fa-plus-circle"></i></a></li>
-             <li><a href="{% url 'basket_view' %}">Basket <i class="fas fa-shopping-basket"></i></a></li>
+             <li><a href="{% url "basket_view" %}">Basket<i class="fas fa-shopping-basket"></i></a></li>
             {% block menu %}{% endblock %}
             <li>
                 <form action="{% url 'index' %}" method="GET">
