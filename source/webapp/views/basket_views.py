@@ -1,3 +1,4 @@
+
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import View
@@ -138,6 +139,8 @@ class OrderCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         order = self.object
+        order.user_id = self.request.user.pk
+        order.save()
         # оптимально:
         # цикл сам ничего не создаёт, не обновляет, не удаляет
         # цикл работает только с объектами в памяти

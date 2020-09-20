@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.db.models import Sum, F, ExpressionWrapper as E
@@ -10,9 +11,8 @@ class Order(models.Model):
     phone = models.CharField(max_length=20, verbose_name='Телефон')
     address = models.CharField(max_length=100, verbose_name='Адрес')
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')
-
-    def __str__(self):
-        return f'{self.name} -- {self.phone}'
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='orders', null=True)
+    def __str__(self):        return f'{self.name} -- {self.phone}'
 
     def format_time(self):
         return self.date_create.strftime('%Y-%m-%d %H:%M:%S')

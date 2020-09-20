@@ -23,6 +23,14 @@
         <p>О себе:</p>
         <p class="pre">{{ user_obj.profile.about }}</p>
     </div>
-{#    <h2 class="text-center clear">Статьи автора:</h2>#}
-{#    {% include 'partial/project_list.html' with projects=user_obj.projects.all %}#}
+    <h2 class="text-center clear">Заказы пользователя:</h2>
+    {% for order in user_obj.orders.all %}
+        Дата заказа: {{ order.date_create }}
+{#         {% for product in order.products.all %}#}
+{#            #}
+{#         {% endfor %}#}
+        {% include 'partial/product_list.html' with products=order.products.all %}
+     {% endfor %}
+
+
 {% endblock %}

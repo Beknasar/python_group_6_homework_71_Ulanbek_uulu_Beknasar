@@ -88,13 +88,16 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     paginate_related_orphans = 0
 
     def get_context_data(self, **kwargs):
-        # projects = self.object.projects.order_by('-date_start')
-        # paginator = Paginator(projects, self.paginate_related_by, orphans=self.paginate_related_orphans)
-        # page_number = self.request.GET.get('page', 1)
-        # page = paginator.get_page(page_number)
-        # kwargs['page_obj'] = page
-        # kwargs['articles'] = page.object_list
-        # kwargs['is_paginated'] = page.has_other_pages()
+        # print(self.object.orders.all())
+        # print(self.object)
+        # for order in self.object.orders.all().order_by('-date_create'):
+        #     for product in order.products.all():
+        #         paginator = Paginator(product, self.paginate_related_by, orphans=self.paginate_related_orphans)
+        #         page_number = self.request.GET.get('page', 1)
+        #         page = paginator.get_page(page_number)
+        #         kwargs['page_obj'] = page
+        #         kwargs['products'] = page.object_list
+        #         kwargs['is_paginated'] = page.has_other_pages()
         return super().get_context_data(**kwargs)
 
 

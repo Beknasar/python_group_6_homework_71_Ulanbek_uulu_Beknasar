@@ -13,31 +13,5 @@
 
 {% endblock %}
     <h1 style="margin-top: 10%">Продукты:</h1>
-    <div class = "products">
-        {% for product in products %}
-            {% if product.amount >= 1 %}
-            <div class="card">
-                <div class="card-content">
-                    <br/>
-                    {% if perms.webapp.delete_product %}
-                        <a href="{% url 'product_delete' product.pk %}" class="card-button"><i class="far fa-trash-alt"></i></a>
-                    {% endif %}
-                    {% if perms.webapp.change_product %}
-                        <a href="{% url 'product_update' product.pk %}" class="card-button"><i class="far fa-edit"></i></a>
-                    {% endif %}
-                    <h3><a href="{% url 'product_view' product.pk %}">{{ product.name }}</a></h3>
-
-                    <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a><br/>
-                    Цена {{ product.price }} за ед.</p>
-                    <p>Количество: {{ product.amount }}</p>
-                    {% include 'partial/basket_add_form.html' %}
-                    <br/>
-                </div>
-		    </div>
-            {% endif %}
-        {% endfor %}
-         {% if is_paginated %}
-            {% include 'partial/pagination.html' %}
-        {% endif %}
-    </div>
+    {% include 'partial/product_list.html' with products=products %}
 {% endblock %}
