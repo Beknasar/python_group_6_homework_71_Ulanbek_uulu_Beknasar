@@ -14,6 +14,8 @@
                     <h3><a href="{% url 'product_view' product.pk %}">{{ product.name }}</a></h3>
                     <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a><br/>
                     Цена {{ product.price }} за ед.</p>
+                    {% include 'partial/basket_add_form.html' %}
+                    <br/>
                 </div>
 		    </div>
         {% endfor %}

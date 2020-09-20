@@ -52,7 +52,6 @@ class Basket(models.Model):
     product = models.ForeignKey('webapp.Product', related_name='basket', on_delete=models.CASCADE,
                                  verbose_name='Корзина')
     amount = models.IntegerField(verbose_name='Количество в корзине', validators=(MinValueValidator(0),))
-    session = models.ForeignKey('sessions.Session', on_delete=models.CASCADE, related_name='basket', null=True)
 
     def __str__(self):
         return '{} -- {}'.format(self.product.name, self.amount)

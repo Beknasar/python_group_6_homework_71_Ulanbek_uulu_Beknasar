@@ -26,7 +26,7 @@ class BasketView(ListView):
 
     def get_basket_ids(self):
         basket_ids = self.request.session.get('basket_ids', [])
-        print(basket_ids)
+        print(f"basket_ids: {basket_ids}")
         return self.request.session.get('basket_ids', [])
 
 
@@ -96,14 +96,7 @@ class BasketDeleteView(DeleteView):
 
 
 # бонус
-class BasketDeleteOneView(DeleteView):
-    model = Basket
-    success_url = reverse_lazy('basket_view')
-
-    # удаление без подтверждения
-    def get(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
-
+class BasketDeleteOneView(BasketDeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         success_url = self.get_success_url()
@@ -137,6 +130,10 @@ class OrderCreateView(CreateView):
     #         product.save()
     #         item.delete()
     #     return response
+    def get_basket_ids(self):
+        basket_ids = self.request.session.get('basket_ids', [])
+        print(basket_ids)
+        return self.request.session.get('basket_ids', [])
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -145,7 +142,7 @@ class OrderCreateView(CreateView):
         # цикл сам ничего не создаёт, не обновляет, не удаляет
         # цикл работает только с объектами в памяти
         # и заполняет два списка: products и order_products
-        basket_products = Basket.objects.all()
+        basket_products = Basket.objects.filter(pk__in=self.get_basket_ids())
         products = []
         order_products = []
         for item in basket_products:

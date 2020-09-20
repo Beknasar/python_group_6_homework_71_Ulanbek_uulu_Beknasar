@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LogoutView
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -6,6 +7,8 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 from accounts.forms import MyUserCreationForm, UserChangeForm, ProfileChangeForm, PasswordChangeForm
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
@@ -30,7 +33,7 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 #     return redirect('index')
 from accounts.models import Profile
 from webapp.forms import SearchForm
-
+from webapp.models import Basket
 
 
 class RegisterView(CreateView):
@@ -156,3 +159,11 @@ class UserPasswordChangeView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('accounts:login')
+
+
+class BasketClearLogoutView(LogoutView):
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
+        basket_ids = request.session.get('basket_ids', [])
+        Basket.objects.filter(pk__in=basket_ids).delete()
+        return super().dispatch(request, *args, **kwargs)

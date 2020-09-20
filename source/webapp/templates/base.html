@@ -21,10 +21,11 @@
 
             {% if request.user.is_authenticated %}
 {#                {% if perms.webapp.change_ and request.user.groups.all or request.user.pk == 1 %}#}
-                    <li><a href="{% url 'accounts:list' %}">User list</a></li>
+
 {#                {% endif %}#}
                     <li><a href="{% url 'accounts:detail' request.user.pk %}">Привет, {{ request.user.get_full_name|default:request.user.username }}</a></li>
                     {% if perms.webapp.add_product %}
+                        <li><a href="{% url 'accounts:list' %}">User list</a></li>
                         <li><a href="{% url 'product_create' %}">Add Product <i class="fas fa-plus-circle"></i></a></li>
                     {% endif %}
                 {% block menu %}{% endblock %}
