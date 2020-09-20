@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Projects{% endblock %}
+{% block styles %}<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">{% endblock %}
+
+{% block search %}
+    <div class="search-form">
+            <form action="{% url 'index' %}" method="GET">
+                <input type="text" name="search">
+                <input type="submit" value="Найти">
+            </form>
+        </div>
+{% endblock %}
+{% block content %}
+    <br/>
+    <h2>Список пользователей: </h2>
+    <div class="container">
+        <table class="table" align="center">
+            {% for user in users %}
+                <tr>
+                    <td>{{ user }}</td>
+                    <td><a href="{% url 'accounts:detail' user.pk%}">Ссылка</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

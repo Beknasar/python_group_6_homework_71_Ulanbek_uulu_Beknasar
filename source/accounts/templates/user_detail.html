@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Пользователь{% endblock %}
+
+{% block menu %}
+    {% if user_obj.pk == request.user.pk  %}
+        <li><a href="{% url 'accounts:change' user_obj.pk %}">Редактировать</a></li>
+        <li><a href="{% url 'accounts:password_change' user_obj.pk %}">Смена пароля</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div style="text-align: left; margin-top: 20%">
+        <h1>Личная страница пользователя {{ user_obj.get_full_name|default:user_obj.username }}</h1>
+        {% if user_obj.profile.avatar %}
+            <img class="avatar" src="{{ user_obj.profile.avatar.url }}" width="250" height="250" alt="user picture">
+        {% endif %}
+        <p>Имя пользователя: {{ user_obj.username }}</p>
+        <p>Имя: {{ user_obj.first_name }}</p>
+        <p>Фамилия: {{ user_obj.last_name }}</p>
+        <p>Почта: {{ user_obj.email }}</p>
+        <p>Ссылка на GitHub: {{ user_obj.profile.link }}</p>
+        <p>О себе:</p>
+        <p class="pre">{{ user_obj.profile.about }}</p>
+    </div>
+{#    <h2 class="text-center clear">Статьи автора:</h2>#}
+{#    {% include 'partial/project_list.html' with projects=user_obj.projects.all %}#}
+{% endblock %}

@@ -17,9 +17,25 @@
     <div class="container">
         <ul class="menu">
             <li><a href="{% url 'index' %}">Home <i class="fas fa-home"></i></a></li>
-            <li><a href="{% url 'product_create' %}">Add Product <i class="fas fa-plus-circle"></i></a></li>
              <li><a href="{% url "basket_view" %}">Basket<i class="fas fa-shopping-basket"></i></a></li>
-            {% block menu %}{% endblock %}
+
+            {% if request.user.is_authenticated %}
+{#                {% if perms.webapp.change_ and request.user.groups.all or request.user.pk == 1 %}#}
+                    <li><a href="{% url 'accounts:list' %}">User list</a></li>
+{#                {% endif %}#}
+                    <li><a href="{% url 'accounts:detail' request.user.pk %}">Привет, {{ request.user.get_full_name|default:request.user.username }}</a></li>
+                    <li><a href="{% url 'product_create' %}">Add Product <i class="fas fa-plus-circle"></i></a></li>
+                {% block menu %}{% endblock %}
+            {% endif %}
+            {% block auth_menu %}
+                {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'accounts:logout' %}?next={{ request.get_full_path }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}?next={{ request.get_full_path }}">Login</a></li>
+                    <li><a href="{% url 'accounts:create' %}?next={{ request.get_full_path }}">Sign Up</a></li>
+                {% endif %}
+            {% endblock %}
+
             <li>
                 <form action="{% url 'index' %}" method="GET">
                     <input type="text" name="search">
@@ -30,7 +46,7 @@
     </div>
 </nav>
 
-<div class="container">
+<div class="container" style="margin-top: 10%">
     {% block content %}{% endblock %}
 </div>
 </body>
