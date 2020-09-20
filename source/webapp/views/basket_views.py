@@ -7,6 +7,29 @@ from django.views.generic import FormView, ListView, CreateView, DeleteView
 from webapp.forms import OrderForm, BasketAddForm
 
 
+class BasketView(ListView):
+    # model = Cart
+    template_name = 'baskets/basket_view.html'
+    context_object_name = 'basket'
+
+    # вместо model = Cart
+    # для выполнения запроса в базу через модель
+    # вместо подсчёта total-ов в Python-е.
+    def get_queryset(self):
+        return Basket.get_with_product().filter(pk__in=self.get_basket_ids())
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context['basket_total'] = Basket.get_basket_total(ids=self.get_basket_ids())
+        context['form'] = OrderForm()
+        return context
+
+    def get_basket_ids(self):
+        basket_ids = self.request.session.get('basket_ids', [])
+        print(basket_ids)
+        return self.request.session.get('basket_ids', [])
+
+
 class BasketAddView(CreateView):
     model = Basket
     form_class = BasketAddForm
@@ -21,14 +44,14 @@ class BasketAddView(CreateView):
         amount = form.cleaned_data.get('amount', 1)
 
         try:
-            basket_product = Basket.objects.get(product=self.product)
+            basket_product = Basket.objects.get(product=self.product, pk__in=self.get_basket_ids())
             basket_product.amount += amount
             if basket_product.amount <= self.product.amount:
                 basket_product.save()
         except Basket.DoesNotExist:
             if amount <= self.product.amount:
-                Basket.objects.create(product=self.product, amount=amount)
-
+                basket_product = Basket.objects.create(product=self.product, amount=amount)
+                self.save_to_session(basket_product)
         return redirect(self.get_success_url())
 
     def form_invalid(self, form):
@@ -41,10 +64,31 @@ class BasketAddView(CreateView):
             return next
         return reverse('index')
 
+    def get_basket_ids(self):
+        return self.request.session.get('basket_ids', [])
+
+    def save_to_session(self, basket_product):
+        basket_ids = self.request.session.get('basket_ids', [])
+        if basket_product.pk not in basket_ids:
+            basket_ids.append(basket_product.pk)
+        self.request.session['basket_ids'] = basket_ids
+
 
 class BasketDeleteView(DeleteView):
     model = Basket
     success_url = reverse_lazy('basket_view')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.delete_from_session()
+        self.object.delete()
+        return redirect(success_url)
+
+    def delete_from_session(self):
+        basket_ids = self.request.session.get('basket_ids', [])
+        basket_ids.remove(self.object.pk)
+        self.request.session['basket_ids'] = basket_ids
 
     # удаление без подтверждения
     def get(self, request, *args, **kwargs):
@@ -123,22 +167,3 @@ class OrderCreateView(CreateView):
         return redirect('basket_view')
 
 
-class BasketView(ListView):
-    # model = Cart
-    template_name = 'baskets/basket_view.html'
-    context_object_name = 'basket'
-
-    # вместо model = Cart
-    # для выполнения запроса в базу через модель
-    # вместо подсчёта total-ов в Python-е.
-    def get_queryset(self):
-        return Basket.get_with_product()
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=object_list, **kwargs)
-        context['basket_total'] = Basket.get_basket_total()
-        context['form'] = OrderForm()
-        return context
-
-    def get_success_url(self):
-        return reverse('index')

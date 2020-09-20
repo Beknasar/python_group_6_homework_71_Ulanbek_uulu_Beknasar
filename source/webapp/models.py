@@ -52,6 +52,7 @@ class Basket(models.Model):
     product = models.ForeignKey('webapp.Product', related_name='basket', on_delete=models.CASCADE,
                                  verbose_name='Корзина')
     amount = models.IntegerField(verbose_name='Количество в корзине', validators=(MinValueValidator(0),))
+    session = models.ForeignKey('sessions.Session', on_delete=models.CASCADE, related_name='basket', null=True)
 
     def __str__(self):
         return '{} -- {}'.format(self.product.name, self.amount)
@@ -75,9 +76,12 @@ class Basket(models.Model):
     #     return total
 
     @classmethod
-    def get_basket_total(cls):
+    def get_basket_total(cls, ids=None):
         # запрос, так быстрее
-        total = cls.get_with_total().aggregate(basket_total=Sum('total'))
+        basket_products = cls.get_with_total()
+        if ids is not None:
+            basket_products = basket_products.filter(pk__in=ids)
+        total = basket_products.aggregate(basket_total=Sum('total'))
         return total['basket_total']
 
     class Meta:
