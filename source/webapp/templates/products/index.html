@@ -12,15 +12,19 @@
         </li>
 
 {% endblock %}
-    <h1>Продукты:</h1>
+    <h1 style="margin-top: 10%">Продукты:</h1>
     <div class = "products">
         {% for product in products %}
             {% if product.amount >= 1 %}
             <div class="card">
                 <div class="card-content">
                     <br/>
-                    <a href="{% url 'product_delete' product.pk %}" class="card-button"><i class="far fa-trash-alt"></i></a>
-                    <a href="{% url 'product_update' product.pk %}" class="card-button"><i class="far fa-edit"></i></a>
+                    {% if perms.webapp.delete_product %}
+                        <a href="{% url 'product_delete' product.pk %}" class="card-button"><i class="far fa-trash-alt"></i></a>
+                    {% endif %}
+                    {% if perms.webapp.change_product %}
+                        <a href="{% url 'product_update' product.pk %}" class="card-button"><i class="far fa-edit"></i></a>
+                    {% endif %}
                     <h3><a href="{% url 'product_view' product.pk %}">{{ product.name }}</a></h3>
 
                     <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a><br/>

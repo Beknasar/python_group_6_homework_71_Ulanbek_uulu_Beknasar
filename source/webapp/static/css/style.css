@@ -137,7 +137,7 @@ body {
     color: white;
 }
 .pre {
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 .error {
@@ -202,7 +202,7 @@ nav a {
 }
 
 .content {
-    margin-top: 13%;
+    margin-top: 25%;
 }
 
 .pagination a, .pagination .page-disabled {

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -45,11 +46,15 @@ class ProductView(DetailView):
         return super().get_queryset().filter(amount__gt=0)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'products/product_update.html'
     form_class = ProductForm
     model = Product
     context_object_name = 'product'
+    permission_required = 'webapp.change_product'
+
+    def has_permission(self):
+        return super().has_permission()
 
     def get_queryset(self):
         return super().get_queryset().filter(amount__gt=0)
@@ -58,19 +63,27 @@ class ProductUpdateView(UpdateView):
         return reverse('product_view', kwargs={'pk': self.object.pk})
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'products/product_create.html'
     form_class = ProductForm
     model = Product
+    permission_required = 'webapp.add_product'
+
+    def has_permission(self):
+        return super().has_permission()
 
     def get_success_url(self):
         return reverse('product_view', kwargs={'pk': self.object.pk})
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'products/product_delete.html'
     model = Product
     success_url = reverse_lazy('index')
+    permission_required = 'webapp.delete_product'
+
+    def has_permission(self):
+        return super().has_permission()
 
     def get_queryset(self):
         return super().get_queryset().filter(amount__gt=0)

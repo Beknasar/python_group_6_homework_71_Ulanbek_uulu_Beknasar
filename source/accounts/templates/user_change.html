@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 style="margin-top: 20%">Поменять личные данные</h1>
+    <h1 class="content">Поменять личные данные</h1>
     <form action="{% url 'accounts:change' user_obj.pk %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% include 'partial/form.html' with form=form fields_only=True %}
