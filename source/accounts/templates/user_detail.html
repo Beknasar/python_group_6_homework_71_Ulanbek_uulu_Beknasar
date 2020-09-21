@@ -25,11 +25,36 @@
     </div>
     <h2 class="text-center clear">Заказы пользователя:</h2>
     {% for order in user_obj.orders.all %}
-        Дата заказа: {{ order.date_create }}
-{#         {% for product in order.products.all %}#}
-{#            #}
-{#         {% endfor %}#}
-        {% include 'partial/product_list.html' with products=order.products.all fields_only=True %}
+        <h2>Дата заказа: {{ order.date_create }}</h2>
+        <table class="cart-table" style="margin-top: 0" align="center">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Итого</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.product_order.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'product_view' item.product.pk %}">{{ item.product.name }}</a>
+{#                            (<a href="{% url 'basket_delete_one' item.pk %}">Удалить Один</a>,#}
+{#                            <a href="{% url 'basket_delete' item.pk %}">Удалить Все</a>)#}
+                        </td>
+                        <td class="text-right">{{ item.product.price }}</td>
+                        <td class="text-right">{{ item.amount }}</td>
+                        <td>{{ item.total_product }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th colspan="3" class="text-right">Итого</th>
+{#                    <th class="text-right">{{ total }}</th>#}
+                </tr>
+            </tbody>
+        </table>
+{#        {% include 'partial/product_list.html' with products=order.products.all fields_only=True %}#}
      {% endfor %}
 
 

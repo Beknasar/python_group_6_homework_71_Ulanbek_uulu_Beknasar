@@ -12,7 +12,9 @@ class Order(models.Model):
     address = models.CharField(max_length=100, verbose_name='Адрес')
     date_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='orders', null=True)
-    def __str__(self):        return f'{self.name} -- {self.phone}'
+
+    def __str__(self):
+        return f'{self.name} -- {self.phone}'
 
     def format_time(self):
         return self.date_create.strftime('%Y-%m-%d %H:%M:%S')
@@ -95,3 +97,4 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return '{}. {}'.format(self.pk, self.amount)
+
