@@ -29,7 +29,7 @@
 {#         {% for product in order.products.all %}#}
 {#            #}
 {#         {% endfor %}#}
-        {% include 'partial/product_list.html' with products=order.products.all %}
+        {% include 'partial/product_list.html' with products=order.products.all fields_only=True %}
      {% endfor %}
 
 

@@ -15,7 +15,9 @@
                     <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a><br/>
                     Цена {{ product.price }} за ед.</p>
                     <p>Количество на складе: {{ product.amount }}</p>
+                {% if not fields_only%}
                     {% include 'partial/basket_add_form.html' %}
+                {% endif %}
                     <br/>
                 </div>
 		    </div>
