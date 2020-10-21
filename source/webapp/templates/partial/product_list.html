@@ -5,14 +5,14 @@
                 <div class="card-content">
                     <br/>
                     {% if perms.webapp.delete_product %}
-                        <a href="{% url 'product_delete' product.pk %}" class="card-button"><i class="far fa-trash-alt"></i></a>
+                        <a href="{% url 'webapp:product_delete' product.pk %}" class="card-button"><i class="far fa-trash-alt"></i></a>
                     {% endif %}
                     {% if perms.webapp.change_product %}
-                        <a href="{% url 'product_update' product.pk %}" class="card-button"><i class="far fa-edit"></i></a>
+                        <a href="{% url 'webapp:product_update' product.pk %}" class="card-button"><i class="far fa-edit"></i></a>
                     {% endif %}
-                    <h3><a href="{% url 'product_view' product.pk %}">{{ product.name }}</a></h3>
+                    <h3><a href="{% url 'webapp:product_view' product.pk %}">{{ product.name }}</a></h3>
 
-                    <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a><br/>
+                    <p>Категория: <a href="{% url 'webapp:product_category' product.category.pk %}">{{ product.category }}</a><br/>
                     Цена {{ product.price }} за ед.</p>
                     <p>Количество на складе: {{ product.amount }}</p>
                 {% if not fields_only%}

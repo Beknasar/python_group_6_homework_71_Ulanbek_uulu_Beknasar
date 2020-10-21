@@ -4,17 +4,17 @@
 
 {% block menu %}
     {% if perms.webapp.delete_product %}
-        <li><a href="{% url 'product_delete' product.pk %}">Delete <i class="fas fa-trash"></i></a></li>
+        <li><a href="{% url 'webapp:product_delete' product.pk %}">Delete <i class="fas fa-trash"></i></a></li>
     {% endif %}
     {% if perms.webapp.change_product %}
-        <li><a href="{% url 'product_update' product.pk %}">Update <i class="fas fa-edit"></i></a></li>
+        <li><a href="{% url 'webapp:product_update' product.pk %}">Update <i class="fas fa-edit"></i></a></li>
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="product_view content">
         <h1>{{ product.name }}</h1>
-        <p>Категория: <a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a></p>
+        <p>Категория: <a href="{% url 'webapp:product_category' product.category.pk %}">{{ product.category }}</a></p>
         <p>Осталось: {{ product.amount }}шт. по цене {{ product.price }} за ед.</p>
         <label>Описание:</label>
         <p class="pre">{{ product.description }}</p>

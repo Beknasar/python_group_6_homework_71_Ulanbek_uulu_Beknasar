@@ -6,7 +6,7 @@
         <li><a href="" class="down">Categories <i class="fas fa-angle-down"></i></a>
           <ul class="submenu">
               {% for category in categories %}
-                  <li><a href="{% url 'product_category' category.pk %}">{{ category.name }}</a></li>
+                  <li><a href="{% url 'webapp:product_category' category.pk %}">{{ category.name }}</a></li>
               {% endfor %}
           </ul>
         </li>

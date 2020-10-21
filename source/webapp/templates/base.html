@@ -16,8 +16,8 @@
 <nav class="navbar">
     <div class="container">
         <ul class="menu">
-            <li><a href="{% url 'index' %}">Home <i class="fas fa-home"></i></a></li>
-             <li><a href="{% url "basket_view" %}">Basket<i class="fas fa-shopping-basket"></i></a></li>
+            <li><a href="{% url 'webapp:index' %}">Home <i class="fas fa-home"></i></a></li>
+             <li><a href="{% url "webapp:basket_view" %}">Basket<i class="fas fa-shopping-basket"></i></a></li>
 
             {% if request.user.is_authenticated %}
 {#                {% if perms.webapp.change_ and request.user.groups.all or request.user.pk == 1 %}#}
@@ -26,7 +26,7 @@
                     <li><a href="{% url 'accounts:detail' request.user.pk %}">Привет, {{ request.user.get_full_name|default:request.user.username }}</a></li>
                     {% if perms.webapp.add_product %}
                         <li><a href="{% url 'accounts:list' %}">User list</a></li>
-                        <li><a href="{% url 'product_create' %}">Add Product <i class="fas fa-plus-circle"></i></a></li>
+                        <li><a href="{% url 'webapp:product_create' %}">Add Product <i class="fas fa-plus-circle"></i></a></li>
                     {% endif %}
                 {% block menu %}{% endblock %}
             {% endif %}
@@ -40,7 +40,7 @@
             {% endblock %}
 
             <li>
-                <form action="{% url 'index' %}" method="GET">
+                <form action="{% url 'webapp:index' %}" method="GET">
                     <input type="text" name="search">
                     <input type="submit" value="Найти">
                 </form>
