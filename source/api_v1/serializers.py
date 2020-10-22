@@ -29,18 +29,21 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'url', 'name', 'description', 'category', 'category_display', 'amount', 'price']
-        # read_only_fields = ('author',)
+        # read_only_fields = ('category_display',)
 
 
-# class OrderProductSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = OrderProduct
-#         fields = ('id', 'order', 'product', 'amount')
+class OrderProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrderProduct
+        fields = ('id', 'order', 'product', 'amount')
 
 
-# class OrderSerializer(serializers.ModelSerializer):
-#     order_products = OrderProductSerializer(many=True, read_only=True)
-#     class Meta:
-#         model = Order
-#         fields = ('user', 'first_name', 'last_name', 'email', 'phone', 'status', 'date_create', 'order_products')
+class OrderSerializer(serializers.ModelSerializer):
+    product_order = OrderProductSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ('user', 'name', 'phone', 'address', 'date_create', 'product_order')
+        # fields = ("__all__")
 
