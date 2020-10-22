@@ -33,7 +33,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderProductSerializer(serializers.ModelSerializer):
-
+    url = serializers.HyperlinkedIdentityField(read_only=True, view_name='api_v1:product-detail')
     class Meta:
         model = OrderProduct
         fields = ('id', 'order', 'product', 'amount')
