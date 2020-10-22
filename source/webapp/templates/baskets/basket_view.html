@@ -6,7 +6,7 @@
         <li><a href="" class="down">Categories <i class="fas fa-angle-down"></i></a>
           <ul class="submenu">
               {% for product in products %}
-                  <li><a href="{% url 'product_category' product.category.pk %}">{{ product.category }}</a></li>
+                  <li><a href="{% url 'webapp:product_category' product.category.pk %}">{{ product.category }}</a></li>
               {% endfor %}
           </ul>
         </li>
@@ -26,9 +26,9 @@
             {% for item in basket %}
                 <tr>
                     <td>
-                        <a href="{% url 'product_view' item.product.pk %}">{{ item.product.name }}</a>
-                        (<a href="{% url 'basket_delete_one' item.pk %}">Удалить Один</a>,
-                        <a href="{% url 'basket_delete' item.pk %}">Удалить Все</a>)
+                        <a href="{% url 'webapp:product_view' item.product.pk %}">{{ item.product.name }}</a>
+                        (<a href="{% url 'webapp:basket_delete_one' item.pk %}">Удалить Один</a>,
+                        <a href="{% url 'webapp:basket_delete' item.pk %}">Удалить Все</a>)
                     </td>
                     <td class="text-right">{{ item.product.price }}</td>
                     <td class="text-right">{{ item.amount }}</td>
@@ -44,6 +44,6 @@
         </tbody>
     </table>
     <h3>Оформить заказ:</h3>
-    {% url 'order_create' as action_url %}
+    {% url 'webapp:order_create' as action_url %}
     {% include 'partial/form.html' with action_url=action_url form_method='post' button_text='Оформить заказ' %}
 {% endblock %}

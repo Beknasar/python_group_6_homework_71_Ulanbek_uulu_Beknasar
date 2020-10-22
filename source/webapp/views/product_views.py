@@ -76,7 +76,7 @@ class ProductUpdateView(PermissionRequiredMixin, UpdateView):
         return super().get_queryset().filter(amount__gt=0)
 
     def get_success_url(self):
-        return reverse('product_view', kwargs={'pk': self.object.pk})
+        return reverse('webapp:product_view', kwargs={'pk': self.object.pk})
 
 
 class ProductCreateView(PermissionRequiredMixin, CreateView):
@@ -89,13 +89,13 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
         return super().has_permission()
 
     def get_success_url(self):
-        return reverse('product_view', kwargs={'pk': self.object.pk})
+        return reverse('webapp:product_view', kwargs={'pk': self.object.pk})
 
 
 class ProductDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'products/product_delete.html'
     model = Product
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('webapp:index')
     permission_required = 'webapp.delete_product'
 
     def has_permission(self):

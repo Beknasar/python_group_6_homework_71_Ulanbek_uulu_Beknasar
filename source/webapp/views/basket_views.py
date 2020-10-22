@@ -63,7 +63,7 @@ class BasketAddView(CreateView):
         next = self.request.GET.get('next')
         if next:
             return next
-        return reverse('index')
+        return reverse('webapp:index')
 
     def get_basket_ids(self):
         return self.request.session.get('basket_ids', [])
@@ -77,7 +77,7 @@ class BasketAddView(CreateView):
 
 class BasketDeleteView(DeleteView):
     model = Basket
-    success_url = reverse_lazy('basket_view')
+    success_url = reverse_lazy('webapp:basket_view')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -114,7 +114,7 @@ class BasketDeleteOneView(BasketDeleteView):
 class OrderCreateView(CreateView):
     model = Order
     form_class = OrderForm
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('webapp:index')
 
     # def form_valid(self, form):
     #     response = super().form_valid(form)
@@ -164,6 +164,6 @@ class OrderCreateView(CreateView):
         return response
 
     def form_invalid(self, form):
-        return redirect('basket_view')
+        return redirect('webapp:basket_view')
 
 
