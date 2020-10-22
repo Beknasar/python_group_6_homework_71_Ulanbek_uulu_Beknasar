@@ -27,7 +27,7 @@ class BasketView(ListView):
 
     def get_basket_ids(self):
         basket_ids = self.request.session.get('basket_ids', [])
-        print(f"basket_ids: {basket_ids}")
+        # print(f"basket_ids: {basket_ids}")
         return self.request.session.get('basket_ids', [])
 
 
@@ -133,7 +133,7 @@ class OrderCreateView(CreateView):
     #     return response
     def get_basket_ids(self):
         basket_ids = self.request.session.get('basket_ids', [])
-        print(basket_ids)
+        # print(basket_ids)
         return self.request.session.get('basket_ids', [])
 
     def form_valid(self, form):

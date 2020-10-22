@@ -35,10 +35,10 @@ class IndexView(SearchView):
         if 'check' not in self.request.session:
             self.request.session['check'] = 0
         self.request.session['check'] += 1
-        print(self.request.session['check'])
+        # print(self.request.session['check'])
 
     def test_session_key(self):
-        print(self.request.session.session_key)
+        # print(self.request.session.session_key)
         if not self.request.session.session_key:
             self.request.session.save()
 
