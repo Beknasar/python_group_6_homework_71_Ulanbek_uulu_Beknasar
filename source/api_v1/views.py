@@ -4,9 +4,12 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import View
 import json
+
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet, ModelViewSet
 
+from api_v1.permissions import GETModelPermissions
 from api_v1.serializers import ProductSerializer, UserSerializer, OrderSerializer
 from webapp.models import Product, Order
 
@@ -39,6 +42,14 @@ def get_token_view(request, *args, **kwargs):
 class OrderViewSet(ViewSet):
    queryset = Order.objects.all()
 
+   def get_permissions(self):
+       print(self.action)
+       print(self.request.method)
+       if self.action in ['list']:  # self.request.method == "GET"
+           return [GETModelPermissions()]
+       else:
+           return [AllowAny()]
+
    def list(self, request):
        objects = Order.objects.all()
        slr = OrderSerializer(objects, many=True, context={'request': request})
@@ -56,6 +67,14 @@ class OrderViewSet(ViewSet):
 class ProductViewSet(ViewSet):
     queryset = Product.objects.all()
     # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_permissions(self):
+        print(self.action)
+        print(self.request.method)
+        if self.action in ['create', 'update', 'destroy']:  # self.request.method == "GET"
+            return [GETModelPermissions()]
+        else:
+            return [AllowAny()]
 
     def list(self, request):
         objects = Product.objects.all()
