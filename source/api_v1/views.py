@@ -7,9 +7,8 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, All
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet, ModelViewSet
 
-from api_v1.permissions import GETModelPermissions
 from api_v1.serializers import ProductSerializer, UserSerializer
-from webapp.models import Product
+from webapp.models import Product, Order
 
 
 @ ensure_csrf_cookie
@@ -22,14 +21,6 @@ def get_token_view(request, *args, **kwargs):
 class ProductViewSet(ViewSet):
     queryset = Product.objects.all()
     # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_permissions(self):
-        print(self.action)
-        print(self.request.method)
-        if self.action in ['list', 'retrieve']:  # self.request.method == "GET"
-            return [GETModelPermissions()]
-        else:
-            return [AllowAny()]
 
     def list(self, request):
         objects = Product.objects.all()
